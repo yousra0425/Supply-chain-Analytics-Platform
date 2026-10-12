@@ -1,0 +1,128 @@
+
+services:
+  api:
+    image: inventory-platform-v2:phase23
+    container_name: inventory-v2-api
+    command:
+      - uvicorn
+      - src.api.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+    ports:
+      - "8081:8080"
+    environment:
+      CLICKHOUSE_HOST: te-clickhouse
+      CLICKHOUSE_PORT: "8123"
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      CASSANDRA_HOST: inventory-cassandra
+      KAFKA_BOOTSTRAP_SERVERS: inventory-v2-kafka:29092
+      RABBITMQ_HOST: inventory-rabbitmq-v2
+      RABBITMQ_PORT: "5672"
+    networks:
+      - inventory-v2-network
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/openapi.json', timeout=5)"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+
+  dashboard:
+    image: inventory-platform-v2:phase23
+    container_name: inventory-v2-dashboard
+    command:
+      - python
+      - -m
+      - src.dashboard.app
+    ports:
+      - "8052:8051"
+    environment:
+      API_BASE_URL: http://api:8080
+      DASH_HOST: 0.0.0.0
+      DASH_PORT: "8051"
+    depends_on:
+      api:
+          condition: service_healthy
+    networks:
+      - inventory-v2-network
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8051/', timeout=5)"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+
+  kafka-consumer:
+    image: inventory-platform-v2:phase23
+    container_name: inventory-v2-kafka-consumer
+    command:
+      - python
+      - -m
+      - src.streaming.kafka_consumer
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: inventory-v2-kafka:29092
+      CASSANDRA_HOST: inventory-cassandra
+      CASSANDRA_PORT: "9042"
+      RABBITMQ_HOST: inventory-rabbitmq-v2
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+    networks:
+      - inventory-v2-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: "unless-stopped"
+
+  live-silver-worker:
+    image: inventory-platform-v2:phase23
+    container_name: inventory-v2-live-silver-worker
+    command: ["python", "-m", "src.workers.live_silver_worker"]
+    environment:
+      RABBITMQ_HOST: inventory-rabbitmq-v2
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      CASSANDRA_HOST: inventory-cassandra
+      CASSANDRA_PORT: "9042"
+      CLICKHOUSE_HOST: te-clickhouse
+      CLICKHOUSE_PORT: "8123"
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+    networks:
+      - inventory-v2-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: "unless-stopped"
+
+networks:
+  inventory-v2-network:
+    external: true
