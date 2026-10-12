@@ -35,3 +35,12 @@ temp/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Local backups
+backups/
+
+# Generated dependency lists
+installed-packages.txt
+
+# Company branding 
+assets/te-connectivity-logo.png

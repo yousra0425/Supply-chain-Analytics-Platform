@@ -1,0 +1,617 @@
+:root {
+    --navy: #14253b;
+    --ink: #233246;
+    --muted: #718094;
+    --line: #e4e8ee;
+    --canvas: #f6f7f9;
+    --orange: #da7026;
+    --white: #ffffff;
+}
+/* =========================================
+   GLOBAL
+\========================================= */
+* {
+    box-sizing: border-box;
+}
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--canvas);
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+}
+/* =========================================
+   APPLICATION LAYOUT
+\========================================= */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar {
+    width: 226px;
+    min-width: 226px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    padding: 28px 12px;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+}
+/* =========================================
+   SIDEBAR
+\========================================= */
+.brand-group {
+    padding: 4px 18px 28px;
+    margin-bottom: 23px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+}
+.brand-company {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.15px;
+}
+.brand {
+    font-size: 12px;
+    font-weight: 400;
+    color: #abb8c9;
+    margin-top: 9px;
+}
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.sidebar .nav-item {
+    display: block;
+    text-decoration: none;
+    color: #b9c5d4;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 12px 17px;
+    transition: background 0.15s, color 0.15s;
+}
+.sidebar .nav-item:hover {
+    background: #273c56;
+    color: #fff;
+}
+.sidebar .nav-item.active,
+.sidebar .nav-item.active:hover {
+    background: #293e59;
+    color: #fff;
+    font-weight: 650;
+    box-shadow: inset 3px 0 0 var(--orange);
+}
+/* =========================================
+   MAIN CONTENT
+\========================================= */
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
+.topbar {
+    height: 59px;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+}
+.topbar-breadcrumb {
+    font-size: 13px;
+    color: #3d4d60;
+    font-weight: 650;
+}
+.topbar-meta {
+    font-size: 12px;
+    color: var(--muted);
+}
+.page-content {
+    max-width: 1620px;
+    margin: 0 auto;
+    padding: 34px 34px 55px;
+    min-width: 0;
+}
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 26px;
+}
+.page-header h1 {
+    font-size: 25px;
+    font-weight: 650;
+    letter-spacing: -0.55px;
+    color: #1a2b3f;
+    margin: 0;
+}
+.page-intro {
+    color: var(--muted);
+    font-size: 12.5px;
+    margin: 9px 0 0;
+    line-height: 1.55;
+}
+.eyebrow {
+    display: none;
+}
+.page-actions {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+.field-label {
+    font-size: 12px;
+    color: #68788c;
+    font-weight: 600;
+}
+.source-dropdown {
+    min-width: 180px;
+    font-size: 12px;
+}
+.source-dropdown .Select-control,
+.field .Select-control {
+    border: 1px solid #d8dee6;
+    border-radius: 5px;
+    height: 38px;
+    box-shadow: none;
+}
+.source-dropdown .Select-value-label {
+    color: #25364b !important;
+}
+.refresh-hint {
+    font-size: 12px;
+    color: #778397;
+}
+/* =========================================
+   KPI CARDS
+\========================================= */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+.metric-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 22px 20px;
+    min-height: 121px;
+    border-radius: 7px;
+    min-width: 0;
+}
+.metric-card--accent {
+    border-left: 2px solid var(--orange);
+}
+.metric-label {
+    color: #69798d;
+    font-size: 12px;
+    margin: 0 0 13px;
+    font-weight: 500;
+}
+.metric-value {
+    font-size: clamp(20px, 2vw, 27px);
+    font-weight: 650;
+    letter-spacing: -0.7px;
+    color: #1d2e43;
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+}
+.metric-caption {
+    font-size: 11px;
+    color: #8d9aab;
+    margin: 10px 0 0;
+}
+/* =========================================
+   GENERAL PANELS
+\========================================= */
+.panel {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    min-width: 0;
+}
+/* =========================================
+   CHART GRID
+\========================================= */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 20px;
+    align-items: stretch;
+}
+/*
+   The panel contains:
+   1. Section heading
+   2. Plotly chart
+   Let the panel grow naturally rather than
+   constraining its total height.
+*/
+.chart-panel {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 430px;
+    height: auto;
+    padding: 22px 24px 20px;
+    overflow: visible;
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+.chart-panel .section-header {
+    flex: 0 0 auto;
+    margin-bottom: 14px;
+}
+.section-title {
+    font-size: 15px;
+    font-weight: 650;
+    color: #25364a;
+    margin: 0;
+    letter-spacing: -0.15px;
+}
+.section-note {
+    font-size: 11.5px;
+    color: #8895a5;
+    margin: 8px 0 0;
+}
+/* =========================================
+   PLOTLY CHART FIX
+\========================================= */
+/*
+   Only control the Dash graph wrapper.
+   Never force heights on Plotly internal SVG,
+   .plot-container or .svg-container.
+   This avoids the charts being detached from
+   their panels and overlapping the next row.
+*/
+.chart-panel .analytics-graph {
+    display: block;
+    position: relative;
+    flex: 0 0 340px;
+    width: 100%;
+    height: 340px !important;
+    min-height: 340px;
+    min-width: 0;
+    overflow: visible;
+}
+/*
+   Do not add height or max-height rules to:
+   .js-plotly-plot
+   .plot-container
+   .svg-container
+   .main-svg
+*/
+/* =========================================
+   FILTERS
+\========================================= */
+.filters-panel {
+    padding: 23px;
+    margin-bottom: 16px;
+}
+.filters-card {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        minmax(0, 1.35fr);
+    gap: 16px;
+}
+.field label {
+    display: block;
+    font-size: 12px;
+    color: #62758b;
+    font-weight: 550;
+    margin: 0 0 8px;
+}
+.search-input {
+    height: 38px;
+    width: 100%;
+    border: 1px solid #d8dee6;
+    border-radius: 5px;
+    padding: 8px 11px;
+    background: #fff;
+    font-size: 12px;
+    outline-color: var(--orange);
+    color: var(--ink);
+}
+.search-input::placeholder {
+    color: #99a4b2;
+}
+/* =========================================
+   TABLES
+\========================================= */
+.table-panel,
+.recent-panel {
+    padding: 23px 0 15px;
+    overflow: hidden;
+}
+.table-heading {
+    padding: 0 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+.table-heading .section-header {
+    margin-bottom: 19px;
+}
+.records-count {
+    font-size: 11px;
+    color: #768395;
+    font-weight: 550;
+}
+.table-panel .dash-table-container,
+.recent-panel .dash-table-container {
+    padding: 0 16px;
+}
+.dash-table-container .previous-next-container {
+    padding: 15px 8px !important;
+}
+.inline-error {
+    font-size: 12px;
+    color: #a73f36;
+    padding: 0 22px;
+    margin: 0 0 14px;
+}
+.inline-error:empty {
+    display: none;
+}
+/* =========================================
+   ACTIVITY STATUS
+\========================================= */
+.live-status {
+    margin-bottom: 15px;
+}
+.status-healthy,
+.status-pending,
+.status-error {
+    font-size: 12px;
+    font-weight: 550;
+    color: #32725e;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.status-pending {
+    color: #a46b21;
+}
+.status-error {
+    color: #a33d35;
+}
+.status-dot {
+    background: currentColor;
+    border-radius: 50%;
+    height: 7px;
+    width: 7px;
+}
+.recent-panel {
+    margin-top: 16px;
+}
+.data-disclaimer {
+    font-size: 11px;
+    color: #8b96a3;
+    margin: 16px 0 0;
+    line-height: 1.55;
+}
+/* =========================================
+   OVERVIEW PAGE
+\========================================= */
+#overview-page .kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+#overview-page .metric-card {
+    min-height: 112px;
+}
+/* =========================================
+   KEY OBSERVATIONS
+\========================================= */
+.insights-panel {
+    padding: 22px 24px;
+    margin-bottom: 18px;
+}
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+}
+.insight-item {
+    padding: 2px 24px;
+    border-right: 1px solid var(--line);
+    min-width: 0;
+}
+.insight-item:first-child {
+    padding-left: 0;
+}
+.insight-item:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+.insight-label {
+    margin: 0 0 10px;
+    font-size: 12px;
+    color: var(--muted);
+}
+.insight-value {
+    color: var(--navy);
+    font-size: 23px;
+    font-weight: 650;
+    letter-spacing: -0.5px;
+    overflow-wrap: anywhere;
+}
+.insight-description {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+#overview-page .recent-panel {
+    margin-top: 0;
+}
+/* =========================================
+   RESPONSIVE — LAPTOP
+\========================================= */
+@media (max-width: 1250px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 1100px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    #overview-page .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .insights-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .insight-item,
+    .insight-item:first-child,
+    .insight-item:last-child {
+        padding: 0 0 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+    }
+    .insight-item:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+}
+/* =========================================
+   RESPONSIVE — TABLET
+\========================================= */
+@media (max-width: 850px) {
+    .sidebar {
+        width: 190px;
+        min-width: 190px;
+    }
+    .page-content {
+        padding: 24px 20px;
+    }
+    .topbar {
+        padding: 0 20px;
+    }
+    .filters-card {
+        grid-template-columns: 1fr 1fr;
+    }
+    .field--search {
+        grid-column: span 2;
+    }
+}
+/* =========================================
+   RESPONSIVE — MOBILE
+\========================================= */
+@media (max-width: 650px) {
+    .app-container {
+        display: block;
+    }
+    .sidebar {
+        position: static;
+        height: auto;
+        width: 100%;
+        min-width: 0;
+        padding: 10px 15px;
+    }
+    .brand-group {
+        padding: 7px 0 12px;
+        margin-bottom: 0;
+    }
+    .nav-list {
+        flex-direction: row;
+        overflow-x: auto;
+        margin-top: 10px;
+    }
+    .sidebar .nav-item {
+        white-space: nowrap;
+        padding: 10px;
+    }
+    .topbar {
+        height: 45px;
+    }
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .page-header h1 {
+        font-size: 23px;
+    }
+    .kpi-grid,
+    #overview-page .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .metric-card {
+        min-height: 104px;
+        padding: 15px 12px;
+    }
+    .metric-value {
+        font-size: 20px;
+    }
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+    .chart-panel {
+        min-height: 400px;
+        padding: 18px 14px 14px;
+    }
+    .chart-panel .analytics-graph {
+        height: 310px !important;
+        min-height: 310px;
+        flex-basis: 310px;
+    }
+    .filters-card {
+        grid-template-columns: 1fr;
+    }
+    .field--search {
+        grid-column: auto;
+    }
+}
+.brand-logo {
+    display: block;
+    width: 155px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 14px;
+}
+.brand-group {
+    padding: 4px 18px 24px;
+    margin-bottom: 23px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+/* Fixed application header and profile */
+.topbar { position: sticky; top: 0; z-index: 100; height: 64px; background: #fff; }
+.topbar-right { display: flex; align-items: center; gap: 22px; }
+.user-chip { display: flex; align-items: center; gap: 10px; border-left: 1px solid var(--line); padding-left: 18px; }
+.user-avatar { display: flex; align-items: center; justify-content: center; flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--navy); color: #fff; font-size: 12px; font-weight: 700; }
+.user-details { display: flex; flex-direction: column; gap: 3px; }
+.user-name { font-size: 12px; font-weight: 650; color: var(--ink); white-space: nowrap; }
+.user-role { font-size: 11px; color: var(--muted); white-space: nowrap; }
+/* Detail charts: allow extra vertical space for ten material labels */
+.charts-grid--details .chart-panel { min-height: 495px; }
+.charts-grid--details .analytics-graph { height: 390px !important; min-height: 390px; flex-basis: 390px; }
+@media (max-width: 650px) {
+    .topbar { height: 60px; padding: 0 15px; }
+    .topbar-right { gap: 10px; }
+    .topbar-meta, .user-role { display: none; }
+    .user-chip { padding-left: 10px; }
+    .charts-grid--details .chart-panel { min-height: 490px; }
+    .charts-grid--details .analytics-graph { height: 390px !important; min-height: 390px; flex-basis: 390px; }
+}
