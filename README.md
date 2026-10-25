@@ -118,9 +118,7 @@ Running the full solution requires the project's source code, configured service
 
 This project strengthened my experience in **end-to-end data engineering**, **distributed data processing**, **Bronze–Silver–Gold architecture**, **SQL analytics**, **workflow orchestration**, and **data reliability**. It also provided practical exposure to **SAP ERP** and the interpretation of industrial supply chain data.
 
-## Acknowledgements
 
-Developed during my internship at **TE Connectivity**, with guidance from **Chaimae Lazrak** (Supply Chain Manager) and **Tarik Oulidi** (Technical Mentor).
 
 ---
 
