@@ -7,7 +7,19 @@ from pathlib import Path
 import requests
 
 
-API_URL = "http://127.0.0.1:8080/api/live/metrics"
+import os
+
+API_URL = os.getenv(
+    "METRICS_API_URL",
+    "http://127.0.0.1:8081/api/live/metrics",
+)
+
+DB_PATH = Path(
+    os.getenv(
+        "METRICS_DB_PATH",
+        "data/processed/streaming_metrics.db",
+    )
+)
 DB_PATH = Path("data/processed/streaming_metrics.db")
 
 

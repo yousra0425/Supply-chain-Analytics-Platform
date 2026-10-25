@@ -667,7 +667,11 @@ def update_live_monitoring(n_intervals, pathname):
         ))
         common_figure(lag_fig)
         lag_fig.update_layout(height=320, autosize=True)
-        lag_fig.update_layout(yaxis_title="Pending messages", margin=dict(l=40, r=18, t=15, b=55))
+        lag_fig.update_layout(
+            yaxis_title="Pending messages",
+            yaxis=dict(rangemode="tozero", minallowed=0),
+            margin=dict(l=40, r=18, t=15, b=55),
+        )
     except Exception as exc:
         print(f"Live history error: {exc}")
         throughput = go.Figure()

@@ -1,230 +1,129 @@
 
-# Inventory Platform V2
-### Supply Chain Inventory Analytics & Data Engineering
+# Supply Chain Inventory Analytics Platform
 
-An end-to-end inventory data platform built with Python, Kafka, RabbitMQ, Cassandra, DuckDB, ClickHouse, Prefect, FastAPI, and Plotly Dash.
+### An event-driven data engineering platform for industrial inventory monitoring
 
-The system processes SAP-derived inventory exports through historical and simulated real-time pipelines, providing inventory analytics, blocked-stock monitoring, and interactive dashboards.
+**TE Connectivity · End-of-Year Internship Project (PFA) · Summer 2026**
 
-## 1. Architecture
+`Data Engineering` · `Workflow Orchestration` · `Streaming` · `Analytics` · `Supply Chain`
 
-### Historical Pipeline
+</div>
 
-SAP Excel Export
-    |
-    v
-Prefect Orchestration
-    |
-    v
-Parquet Staging
-    |
-    v
-RabbitMQ
-    |
-    v
-Singleton Historical Worker
-    |
-    v
-DuckDB Bronze
-    |
-    v
-Python Cleaning & Transformation
-    |
-    v
-ClickHouse Historical Gold
+---
 
-### Simulated Live Pipeline
+## Overview
 
-SAP-Derived Excel Snapshot
-    |
-    v
-Python Replay Producer
-    |
-    v
-Kafka (inventory.v2.raw)
-    |
-    v
-Kafka Consumer
-    |
-    v
-Cassandra Bronze
-    |
-    v
-RabbitMQ (inventory.v2.live.ready)
-    |
-    v
-Live Silver Worker
-    |
-    v
-ClickHouse Live Gold
+Industrial inventory data is often distributed across operational exports and requires substantial preparation before it can support analysis. This project develops an **end-to-end inventory analytics platform** that transforms SAP-derived inventory records into reliable, explorable insights.
 
-### Application Layer
+The platform combines **historical processing** with a **simulated streaming workflow**, using a Bronze–Silver–Gold architecture to separate ingestion, data preparation, and analytics. A web dashboard provides visibility into blocked stock, inventory ageing, financial exposure, material classifications, and pipeline activity.
 
-ClickHouse
-    |
-    v
-FastAPI
-    |
-    v
-Plotly Dash Dashboard
+> **Data-source clarification:** The streaming workflow replays records from SAP-derived files to simulate incoming events. It is **not** a direct real-time SAP integration.
 
-The live pipeline replays events from a static dataset. It does not claim a direct real-time connection to SAP.
+## Project objectives
 
-## 2. Technologies
+- Automate preparation and processing of inventory exports.
+- Support both historical analysis and event-driven inventory updates.
+- Apply consistent data-quality and transformation rules across processing paths.
+- Provide meaningful supply chain KPIs through interactive visualizations.
+- Improve pipeline reliability with orchestration, idempotent processing, and monitoring.
 
-| Category | Technologies |
-|---|---|
-| Programming | Python 3.13 |
-| Data processing | Pandas / Polars, SQL |
-| Orchestration | Prefect |
-| Event streaming | Apache Kafka |
-| Messaging | RabbitMQ |
-| Operational database | Apache Cassandra |
-| Historical analytics | DuckDB |
-| Analytical database | ClickHouse |
-| Backend API | FastAPI |
-| Dashboard | Plotly Dash |
-| Containerization | Docker, Docker Compose |
-| Testing | Pytest |
+## System architecture
 
-## 3. Features
+The platform implements **two complementary data paths**, coordinated by **Prefect**, which converge at the analytical serving layer.
 
-- Historical SAP inventory processing
-- Kafka-based simulated live data ingestion
-- Cassandra operational data storage
-- RabbitMQ event-driven processing
-- Historical and live analytical tables in ClickHouse
-- Inventory quality and consistency checks
-- Idempotency protection and retry handling
-- Dead-letter processing support
-- REST API and interactive dashboard
-- Docker health checks and automatic restart policies
-- Docker log rotation
+<div align="center">
+  <img src="docs/architecture.png" alt="Implemented architecture with Prefect orchestration, historical DuckDB Bronze and streaming Cassandra Bronze paths, RabbitMQ, separate Silver transformations, ClickHouse Gold, FastAPI, and Plotly Dash" width="540" />
+  <br/>
+  <sub>Architecture: historical and simulated streaming pipelines with Bronze–Silver–Gold processing.</sub>
+</div>
 
-## 4. Prerequisites
+### Historical pipeline
 
-- Docker Desktop
-- Git Bash (Windows)
-- Python 3.13
-- Project dependencies installed in a virtual environment
-- Existing Cassandra, ClickHouse, and RabbitMQ infrastructure
+1. **Source:** Inventory records exported from SAP into Excel files.
+2. **Ingestion:** Data preparation and validation, coordinated through Prefect.
+3. **Bronze:** Raw historical data stored in DuckDB; asynchronous processing notifications are exchanged through RabbitMQ.
+4. **Silver:** Historical records are cleaned, standardized, validated, and enriched.
+5. **Gold:** Prepared analytical data is stored in ClickHouse.
 
-This deployment uses the external Docker network `inventory-v2-network`.
+### Simulated streaming pipeline
 
-Kafka's persistent data is stored in the external volume `inventory-v2-kafka-data`.
+1. **Event replay:** Kafka publishes inventory records from a reference snapshot as simulated incoming events.
+2. **Bronze:** A consumer processes events and maintains operational records in Cassandra.
+3. **Messaging:** RabbitMQ notifies downstream processing components.
+4. **Silver:** Incoming records are validated and transformed consistently with the historical data model.
+5. **Gold:** The streaming analytical view is loaded into ClickHouse.
 
-## 5. Installation
+**Prefect coordinates workflows across the platform**, including historical ingestion, simulated replay initiation, validation, and processing checks. **Kafka and RabbitMQ** handle event transport and asynchronous notifications; Prefect does not replace those messaging systems.
 
-Clone the repository:
+Historical and simulated streaming views are **kept logically separate** because they originate from the same reference snapshot. Their inventory totals must not be added together.
 
-```bash
-git clone <repository-url>
-cd inventory-platform-v2
-```
+## Key features
 
-Create a virtual environment:
+| Area | Capabilities |
+| --- | --- |
+| Inventory overview | Blocked-stock value, record counts, distinct materials, affected plants |
+| Stock ageing | Inventory ageing brackets and long-held stock exposure |
+| Material analysis | Filtering by plant, material, and batch; record-level exploration |
+| Financial insights | Exposure by plant, material category, and highest-value stock lines |
+| Data orchestration | Coordinated processing, task monitoring, validation, and workflow status |
+| Streaming activity | Events processed, consumer backlog, and sampled processing activity |
+| Reliability | Data-quality checks, duplicate prevention, container health monitoring, automated tests |
 
-```bash
-python -m venv .venv
-source .venv/Scripts/activate
-```
+## Technology stack
 
-Install dependencies:
+| Component | Technologies |
+| --- | --- |
+| Data processing | Python, SQL |
+| Workflow orchestration | Prefect |
+| Streaming and messaging | Apache Kafka, RabbitMQ |
+| Bronze storage | DuckDB (historical), Apache Cassandra (streaming) |
+| Silver transformations | Python data validation, cleaning, and enrichment |
+| Gold analytics | ClickHouse |
+| API and dashboard | FastAPI, Plotly Dash |
+| Deployment | Docker, Docker Compose |
+| Source data | SAP-derived Excel inventory exports |
 
-```bash
-pip install -r requirements.txt
-```
+## Results from the reference inventory snapshot
 
-Configure environment variables in `.env` using the credentials and hostnames appropriate to your environment.
+The implementation was validated against an inventory snapshot containing:
 
-Do not commit `.env` or credentials to Git.
+| Indicator | Result |
+| --- | ---: |
+| Blocked-stock records | 1,886 |
+| Distinct materials | 547 |
+| Plants represented | 6 |
+| Total blocked-stock value | €1,158,169.31 |
+| Blocked value aged over 90 days | 45.5% |
+| Automated tests passed | 44 |
 
-> Note: The current startup script expects existing infrastructure containers and persistent volumes. It is not yet a one-command deployment on a completely new machine.
+These figures describe the **reference dataset used during the project**, not independently measured operational savings. The historical and replayed views describe the same underlying inventory snapshot.
 
-## 6. Deployment
+## Dashboard
 
-Start the platform:
+The dashboard provides three main areas:
 
-```bash
-bash scripts/start.sh
-```
+- **Overview:** Supply chain KPIs, ageing distribution, exposure by plant, material categories, and priority stock lines.
+- **Materials:** Searchable, filterable blocked-stock records with plant and batch detail.
+- **Activity:** Processing-event counts, backlog indicators, and sampled streaming activity.
 
-Check status:
+> **Confidentiality:** Actual SAP exports, internal material or batch identifiers, and operational dashboard screenshots should only be published with authorization. Use anonymized examples for a public repository.
 
-```bash
-bash scripts/status.sh
-```
+## Implementation notes
 
-Stop the application:
+This repository represents an **internship prototype** developed for analytical exploration and workflow validation. It uses Dockerized services and separate historical and streaming processing paths. The project demonstrates event-driven processing, data-quality controls, and operational monitoring, but is not presented as a production deployment or as proof of measured inventory optimization.
 
-```bash
-bash scripts/stop.sh
-```
+Running the full solution requires the project's source code, configured services, environment variables, and authorized input data. Setup details should be checked against the accompanying Docker Compose and configuration files rather than copying real internal credentials into the repository.
 
-The shutdown script leaves Kafka, Cassandra, ClickHouse, and RabbitMQ running to preserve the existing infrastructure.
+## What I learned
 
-## 7. Application Access
+This project strengthened my experience in **end-to-end data engineering**, **distributed data processing**, **Bronze–Silver–Gold architecture**, **SQL analytics**, **workflow orchestration**, and **data reliability**. It also provided practical exposure to **SAP ERP** and the interpretation of industrial supply chain data.
 
-| Service | URL |
-|---|---|
-| Dashboard | http://localhost:8052 |
-| FastAPI documentation | http://localhost:8081/docs |
-| Kafka external listener | localhost:9092 |
+## Acknowledgements
 
-## 8. Validation Results
+Developed during my internship at **TE Connectivity**, with guidance from **Chaimae Lazrak** (Supply Chain Manager) and **Tarik Oulidi** (Technical Mentor).
 
-The validated inventory snapshot contains:
+---
 
-| Metric | Value |
-|---|---:|
-| Inventory records | 1,886 |
-| Unique record IDs | 1,886 |
-| Materials | 547 |
-| Plants | 6 |
-| Blocked inventory value | EUR 1,158,169.31 |
-| Missing material types | 0 |
-
-Historical and live analytical views contain the same underlying inventory snapshot and must not be added together.
-
-Validation completed:
-
-- 44 Phase 22 automated tests passed
-- Kafka consumer lag: 0
-- Successful Kafka → Cassandra → RabbitMQ → ClickHouse processing
-- API and dashboard health checks passed
-- Kafka health check passed
-- Log rotation configured for application containers and Kafka
-
-Run baseline validation:
-
-```bash
-python -m scripts.phase22_baseline
-```
-
-## 9. Testing
-
-Run the Phase 22 tests:
-
-```bash
-python -m pytest tests/test_phase22_*.py -q
-```
-
-On Windows, Cassandra driver compatibility may require executing the tests inside the Linux Docker image instead.
-
-## 10. Project Limitations
-
-- The live pipeline uses simulated event replay from a static SAP-derived export.
-- Kafka is currently deployed as a single-node KRaft broker.
-- The startup scripts depend on separately provisioned infrastructure.
-- The application is configured for local deployment, not public internet exposure.
-- Production authentication, high availability, and backup/recovery procedures require further work.
-
-## 11. Future Improvements
-
-- Infrastructure provisioning on a new machine
-- Centralized metrics and observability
-- Automated backup and restoration testing
-- CI/CD with GitHub Actions
-- Stronger application security
-- Forecasting and anomaly detection
-- Cloud deployment
+<div align="center">
+  <sub>Academic internship project · 2026</sub>
+</div>

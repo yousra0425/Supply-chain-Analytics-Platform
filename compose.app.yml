@@ -3,6 +3,8 @@ services:
   api:
     image: inventory-platform-v2:phase23
     container_name: inventory-v2-api
+    volumes:
+      - ./data/processed:/app/data/processed:ro
     command:
       - uvicorn
       - src.api.main:app
@@ -122,7 +124,30 @@ services:
         max-size: "10m"
         max-file: "3"
     restart: "unless-stopped"
-
+  
+  metrics-collector:
+    image: inventory-platform-v2:phase23
+    container_name: inventory-v2-metrics-collector
+    command:
+      - python
+      - -m
+      - src.monitoring.metrics_collector
+    environment:
+      METRICS_API_URL: http://api:8080/api/live/metrics
+      METRICS_DB_PATH: /app/data/processed/streaming_metrics.db
+    volumes:
+      - ./data/processed:/app/data/processed
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - inventory-v2-network
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 networks:
   inventory-v2-network:
     external: true
